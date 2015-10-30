@@ -78,7 +78,7 @@ IRQ:
 ; $BFFA = 49,146 = 48 KB
 ; * = end of program (current PC)
 ; 16 = size of iNES header in bytes
-.dsb $BFFA-*-16, 0
+.dsb $BFFA-*, 0
 
 .word VBLANK, RESET, IRQ
 
