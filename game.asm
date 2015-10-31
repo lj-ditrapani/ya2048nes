@@ -20,6 +20,22 @@
 ; $8000 = 32,768 = 32 KB = start of NES PRG ROM
 * = $8000
 
+palette:
+    ; Global background:  light-light-blue
+    ; $0D = black
+
+    ; Background
+    .byte $31,$0D,$02,$1C   ; Blue, dark cyan
+    .byte $31,$0D,$0B,$03   ; Green, purple
+    .byte $31,$0D,$04,$15   ; fusia, hot pink
+    .byte $31,$0D,$16,$07   ; Orange, dark red
+
+    ; Sprites
+    .byte $31,$0D,$3C,$1C   ; Cyan
+    .byte $31,$0D,$19,$29   ; Green + yellow-green
+    .byte $31,$0D,$17,$27   ; Orrange
+    .byte $31,$01,$12,$31   ; Blue
+
 RESET:
     SEI                 ; SEt Interrupt disable; I flag = 1; disable IRQs
     CLD                 ; CLear Decimal mode; D flag = 0; Disable decimal mode
@@ -53,8 +69,9 @@ RESET:
     STA $2006
     LDX #$00
 fill_palette:
+    LDA palette, x
+    STA $2007
     INX
-    STX $2007
     CPX #$20
     BNE fill_palette
 
