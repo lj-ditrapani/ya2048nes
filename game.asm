@@ -45,18 +45,12 @@ RESET:
     TXS                 ; Set up stack; Transfer Index X to Stack Register
     INX                 ; X = 255 + 1 = 0
     ; Now store 0 to the following 3 address to clear flags.
-    ;STX $2000           ; disable NMI
-    ;STX $2001           ; disable rendering
+    STX $2000           ; disable NMI
+    STX $2001           ; disable rendering
     STX $4010           ; Set APU DMC register to 0; disable DMC IRQs IL-- RRRR
 
     LDA #%00001000      ; BG patterns $0000; Sprite patterns $1000
     STA $2000
-    LDA #%00011110      ; D4 Sprites visible
-                        ; D3 BG visible
-                        ; D2 No sprite clipping
-                        ; D1 No BG clipping
-                        ; D0 Color display
-    STA $2001
 
     ; PALETTE
     ; Set palette colors
@@ -75,23 +69,55 @@ fill_palette:
     CPX #$20
     BNE fill_palette
 
-wait_on_vblank:
-    LDA $2002
-    BPL wait_on_vblank
+;wait_on_vblank:
+;    LDA $2002
+;    BPL wait_on_vblank
 
 nametable:
-    LDA #$30
+    LDA #$20
     STA $2006
-    LDA #$30
+    LDA #$00
     STA $2006
 
-    LDX #$30
-fill_nametable_loop:
-    TXA
-    INX
+; Fill first 2 rows of nametable with C
+    LDX #$00
+    LDA #$02
+first_2_rows_of_nametable:
     STA $2007
-    CMP $38
+    INX
+    CPX #$40
+    BNE first_2_rows_of_nametable
+
+; Show entire nametable on screen
+    LDA #$00    ; CHR index
+    LDY #$00    ; row counter
+fill_nametable_loop:
+    LDX #$00    ; column counter
+write_a_chr:
+    STA $2007
+    CLC
+    ADC #$1
+    INX
+    CPX #$10
+    BNE write_a_chr
+
+write_a_blank:
+    STA $2007
+    INX
+    CPX #$20
+    BNE write_a_blank
+
+    INY
+    CPY #$10
     BNE fill_nametable_loop
+
+; Enable PPU
+    LDA #%00011110      ; D4 Sprites visible
+                        ; D3 BG visible
+                        ; D2 No sprite clipping
+                        ; D1 No BG clipping
+                        ; D0 Color display
+    STA $2001
 
 loop:
     JMP loop            ; infinite loop
