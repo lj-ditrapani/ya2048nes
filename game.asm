@@ -45,11 +45,11 @@ RESET:
     TXS                 ; Set up stack; Transfer Index X to Stack Register
     INX                 ; X = 255 + 1 = 0
     ; Now store 0 to the following 3 address to clear flags.
-    STX $2000           ; disable NMI
-    STX $2001           ; disable rendering
+    ;STX $2000           ; disable NMI
+    ;STX $2001           ; disable rendering
     STX $4010           ; Set APU DMC register to 0; disable DMC IRQs IL-- RRRR
 
-    LDA #%00001000      ; GB patterns $0000; Sprite patterns $1000
+    LDA #%00001000      ; BG patterns $0000; Sprite patterns $1000
     STA $2000
     LDA #%00011110      ; D4 Sprites visible
                         ; D3 BG visible
@@ -75,9 +75,24 @@ fill_palette:
     CPX #$20
     BNE fill_palette
 
+wait_on_vblank:
+    LDA $2002
+    BPL wait_on_vblank
 
-    ; LDA #%10000000      ; intensify blues
-    ; STA $2001
+nametable:
+    LDA #$30
+    STA $2006
+    LDA #$30
+    STA $2006
+
+    LDX #$30
+fill_nametable_loop:
+    TXA
+    INX
+    STA $2007
+    CMP $38
+    BNE fill_nametable_loop
+
 loop:
     JMP loop            ; infinite loop
 
