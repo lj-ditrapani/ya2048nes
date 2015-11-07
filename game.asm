@@ -21,7 +21,7 @@
 * = $8000
 
 palette:
-    ; Global background:  light-light-blue
+    ; Global background  light-light-blue
     ; $0D = black
 
     ; Background
@@ -122,6 +122,31 @@ write_a_blank:
     CPY #$10
     BNE fill_nametable_loop
 
+; Enable PPU
+    LDA #%00011110      ; D4 Sprites visible
+                        ; D3 BG visible
+                        ; D2 No sprite clipping
+                        ; D1 No BG clipping
+                        ; D0 Color display
+    STA $2001
+
+; Enable NMI (VBLANK)
+    LDA #%10001000      ; D7    enable NMI (VBLANK), 
+                        ; D3-4  BG patterns $0000; Sprite patterns $1000
+    STA $2000           ; enable NMI
+
+; counter
+    LDA #$00
+    STA $0000
+
+loop:
+    JMP loop            ; infinite loop
+
+
+; When vblank or irqbrk interrupts are triggered,
+; just immediately return from the  interrupt
+VBLANK:
+
 ; Sprites
     ; Set sprit data to be transfered to PPU
     LDX #$00
@@ -132,29 +157,27 @@ fill_sprites_loop:
     CPX #$20            ; 8 sprites * 4 bytes = 32
     BNE fill_sprites_loop
 
-    ; Set automatic transfor of work RAM $0200 - $02FF
+    LDA #$A8            ; Y index
+    STA $0220
+    LDA #$00            ; Tile
+    STA $0221
+    LDA #%00000000      ; color
+    STA $0222
+    LDA #$80            ; X index
+    CLC
+    ADC $0000
+    STA $0223
+
+    ; Set automatic transfer of work RAM $0200 - $02FF
     LDA #$02
     STA $4014           ; OAM DMA address high byte
     LDA #$00
     STA $2003           ; OAM DMA address low byte
 
-; Enable PPU
-    LDA #%00011110      ; D4 Sprites visible
-                        ; D3 BG visible
-                        ; D2 No sprite clipping
-                        ; D1 No BG clipping
-                        ; D0 Color display
-    STA $2001
+    INC $0000
 
-loop:
-    JMP loop            ; infinite loop
-
-
-; When vblank or irqbrk interrupts are triggered,
-; just immediately return from the  interrupt
-VBLANK:
 IRQ:
-    rti
+    RTI
 
 
 ; Fill with zeros from current PC to $bffa
