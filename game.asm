@@ -135,9 +135,10 @@ write_a_blank:
                         ; D3-4  BG patterns $0000; Sprite patterns $1000
     STA $2000           ; enable NMI
 
-; counter
+; frame_counter
+    frame_counter = $0000
     LDA #$00
-    STA $0000
+    STA frame_counter
 
 loop:
     JMP loop            ; infinite loop
@@ -165,7 +166,7 @@ fill_sprites_loop:
     STA $0222
     LDA #$80            ; X index
     CLC
-    ADC $0000
+    ADC frame_counter
     STA $0223
 
     ; Set automatic transfer of work RAM $0200 - $02FF
@@ -174,7 +175,7 @@ fill_sprites_loop:
     LDA #$00
     STA $2003           ; OAM DMA address low byte
 
-    INC $0000
+    INC frame_counter
 
 IRQ:
     RTI
