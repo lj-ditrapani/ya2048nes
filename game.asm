@@ -144,6 +144,21 @@ write_a_blank:
     STA frame_counter
 
 main:
+; TODO  determine if inside animation sequence
+animating:
+; TODO  do next step in animation
+waiting_on_input:
+; Input
+    ; Set bit 0 of $4016 high and then low (strobe)
+    LDA #$01            ; Reset controller/reload button A
+    STA $4016
+    LDA #$00            ; Latch all values
+    STA $4016
+    LDA $4016           ; Player 1 - A
+    AND #$01
+    BNE A_pressed
+
+update_sprites:
 ; Sprites
     ; Set sprite data to be transfered to PPU
     LDX #$00
@@ -168,6 +183,10 @@ fill_sprites_loop:
 empty_loop:             ; kill time until next frame
     JMP empty_loop      ; infinite loop
 
+A_pressed:
+    LDA #$00
+    STA frame_counter
+    JMP update_sprites
 
 ; When vblank interrupt, DMA sprite data and modify nametable
 VBLANK:
