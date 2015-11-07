@@ -140,16 +140,9 @@ write_a_blank:
     LDA #$00
     STA frame_counter
 
-loop:
-    JMP loop            ; infinite loop
-
-
-; When vblank or irqbrk interrupts are triggered,
-; just immediately return from the  interrupt
-VBLANK:
-
+main:
 ; Sprites
-    ; Set sprit data to be transfered to PPU
+    ; Set sprite data to be transfered to PPU
     LDX #$00
 fill_sprites_loop:
     LDA sprite_data, x
@@ -169,6 +162,15 @@ fill_sprites_loop:
     ADC frame_counter
     STA $0223
 
+empty_loop:
+    JMP empty_loop            ; infinite loop
+
+
+; When vblank interrupt, DMA sprite data and modify nametable
+VBLANK:
+    PLA                 ; pop proc status word off stack & throw away
+    PLA                 ; pop PC off stack & throw away
+; Copy sprites from work RAM to VRAM
     ; Set automatic transfer of work RAM $0200 - $02FF
     LDA #$02
     STA $4014           ; OAM DMA address high byte
@@ -176,7 +178,10 @@ fill_sprites_loop:
     STA $2003           ; OAM DMA address low byte
 
     INC frame_counter
+    JMP main
 
+; When irqbrk interrupts are triggered,
+; just immediately return from the  interrupt
 IRQ:
     RTI
 
