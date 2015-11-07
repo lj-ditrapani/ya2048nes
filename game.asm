@@ -59,8 +59,15 @@ RESET:
     STX $2001           ; disable rendering
     STX $4010           ; Set APU DMC register to 0; disable DMC IRQs IL-- RRRR
 
-    LDA #%00001000      ; BG patterns $0000; Sprite patterns $1000
-    STA $2000
+; Apparently we have to wait for 2 frames before the PPU is ready...
+; it was in bunnyboy's nerdy nights tutorial
+wait_on_vblank1:        ; First wait for vblank to make sure PPU is ready
+    LDA $2002
+    BPL wait_on_vblank1
+
+wait_on_vblank2:        ; Second wait for vblank, PPU is ready after this
+    LDA $2002
+    BPL wait_on_vblank2
 
 ; PALETTE
     LDA $2002           ; read PPU status to reset the high/low latch to high
@@ -80,19 +87,15 @@ fill_palette:
     CPX #$20            ; Write 32 colors; 16 bg & 16 sprite
     BNE fill_palette
 
-;wait_on_vblank:
-;    LDA $2002
-;    BPL wait_on_vblank
-
 nametable:
     LDA #$20
     STA $2006
     LDA #$00
     STA $2006
 
-; Fill first 2 rows of nametable with C
+; Fill first 2 rows of nametable with blank
     LDX #$00
-    LDA #$02
+    LDA #$87
 first_2_rows_of_nametable:
     STA $2007
     INX
@@ -162,15 +165,15 @@ fill_sprites_loop:
     ADC frame_counter
     STA $0223
 
-empty_loop:
-    JMP empty_loop            ; infinite loop
+empty_loop:             ; kill time until next frame
+    JMP empty_loop      ; infinite loop
 
 
 ; When vblank interrupt, DMA sprite data and modify nametable
 VBLANK:
     PLA                 ; pop proc status word off stack & throw away
     PLA                 ; pop PC off stack & throw away
-; Copy sprites from work RAM to VRAM
+; Copy sprites from work RAM to VRAM OAM
     ; Set automatic transfer of work RAM $0200 - $02FF
     LDA #$02
     STA $4014           ; OAM DMA address high byte
@@ -178,6 +181,9 @@ VBLANK:
     STA $2003           ; OAM DMA address low byte
 
     INC frame_counter
+
+; put name table changes here
+
     JMP main
 
 ; When irqbrk interrupts are triggered,
