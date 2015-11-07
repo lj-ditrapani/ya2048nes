@@ -31,10 +31,20 @@ palette:
     .byte $31,$0D,$16,$07   ; Orange, dark red
 
     ; Sprites
-    .byte $31,$0D,$3C,$1C   ; Cyan
+    .byte $31,$0D,$0C,$1C   ; Cyan
     .byte $31,$0D,$19,$29   ; Green + yellow-green
     .byte $31,$0D,$17,$27   ; Orrange
-    .byte $31,$01,$12,$31   ; Blue
+    .byte $31,$01,$12,$21   ; Blue
+
+sprite_data:
+    .byte $80,$00,%00000000,$80
+    .byte $80,$00,%00000001,$88
+    .byte $80,$00,%00000010,$90
+    .byte $80,$00,%00000011,$98
+    .byte $90,$20,%00000000,$80
+    .byte $90,$21,%00000001,$88
+    .byte $98,$30,%00000010,$80
+    .byte $98,$31,%00000011,$88
 
 RESET:
     SEI                 ; SEt Interrupt disable; I flag = 1; disable IRQs
@@ -52,7 +62,8 @@ RESET:
     LDA #%00001000      ; BG patterns $0000; Sprite patterns $1000
     STA $2000
 
-    ; PALETTE
+; PALETTE
+    LDA $2002           ; read PPU status to reset the high/low latch to high
     ; Set palette colors
     ; $3F00 - $3F0F )  Background palette
     ; $3F10 - $3F1F )  Sprite palette
@@ -66,7 +77,7 @@ fill_palette:
     LDA palette, x
     STA $2007
     INX
-    CPX #$20
+    CPX #$20            ; Write 32 colors; 16 bg & 16 sprite
     BNE fill_palette
 
 ;wait_on_vblank:
@@ -110,6 +121,22 @@ write_a_blank:
     INY
     CPY #$10
     BNE fill_nametable_loop
+
+; Sprites
+    ; Set sprit data to be transfered to PPU
+    LDX #$00
+fill_sprites_loop:
+    LDA sprite_data, x
+    STA $0200, x
+    INX
+    CPX #$20            ; 8 sprites * 4 bytes = 32
+    BNE fill_sprites_loop
+
+    ; Set automatic transfor of work RAM $0200 - $02FF
+    LDA #$02
+    STA $4014           ; OAM DMA address high byte
+    LDA #$00
+    STA $2003           ; OAM DMA address low byte
 
 ; Enable PPU
     LDA #%00011110      ; D4 Sprites visible
