@@ -142,6 +142,9 @@ write_a_blank:
     frame_counter = $0000
     LDA #$00
     STA frame_counter
+    y_pos = $0001
+    LDA #$AB
+    STA y_pos
 
 main:
 ; TODO  determine if inside animation sequence
@@ -155,8 +158,21 @@ waiting_on_input:
     LDA #$00            ; Latch all values
     STA $4016
     LDA $4016           ; Player 1 - A
+    LDA $4016           ; Player 1 - B
+    LDA $4016           ; Player 1 - Select
+    LDA $4016           ; Player 1 - Start
+    LDA $4016           ; Player 1 - Up
     AND #$01
-    BNE A_pressed
+    BNE up_pressed
+    LDA $4016           ; Player 1 - Down
+    AND #$01
+    BNE down_pressed
+    LDA $4016           ; Player 1 - Left
+    AND #$01
+    BNE left_pressed
+    LDA $4016           ; Player 1 - Right
+    AND #$01
+    BNE right_pressed
 
 update_sprites:
 ; Sprites
@@ -169,13 +185,13 @@ fill_sprites_loop:
     CPX #$20            ; 8 sprites * 4 bytes = 32
     BNE fill_sprites_loop
 
-    LDA #$A8            ; Y index
+    LDA y_pos           ; Y index
     STA $0220
     LDA #$00            ; Tile
     STA $0221
     LDA #%00000000      ; color
     STA $0222
-    LDA #$80            ; X index
+    LDA #$00            ; X index
     CLC
     ADC frame_counter
     STA $0223
@@ -183,8 +199,21 @@ fill_sprites_loop:
 empty_loop:             ; kill time until next frame
     JMP empty_loop      ; infinite loop
 
-A_pressed:
+up_pressed:
+    DEC y_pos
+    JMP update_sprites
+
+down_pressed:
+    INC y_pos
+    JMP update_sprites
+
+left_pressed:
     LDA #$00
+    STA frame_counter
+    JMP update_sprites
+
+right_pressed:
+    LDA #$F0
     STA frame_counter
     JMP update_sprites
 
