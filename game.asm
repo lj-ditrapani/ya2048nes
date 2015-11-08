@@ -22,6 +22,19 @@
 
 ; Data -------------------------------------------------------------------------
 
+; strings
+
+score_string:
+    .aasc "score"
+top_score_string:
+    .aasc "top score"
+you_win_string:
+    .aasc "you win"
+you_loose_string:
+    .aasc "you lose"
+play_again_string:
+    .aasc "press a to play again"
+
 palette:
     ; Global background  light-light-blue
     ; $0D = black
@@ -135,7 +148,7 @@ fill_palette:
 ; 256 tiles = 8 rows of blank tiles
 draw_8_rows_of_blank_tiles:
     LDX #$00
-    LDA #$87
+    LDA #$20
 draw_a_blank_tile:
     STA $2007
     INX
@@ -152,16 +165,13 @@ draw_a_blank_tile:
     LDA #$6A
     STA $2006
 
-    LDA #21             ; s
+    LDX #$00
+write_score:
+    LDA score_string, x
     STA $2007
-    LDA #02             ; c
-    STA $2007
-    LDA #$18            ; o
-    STA $2007
-    LDA #$18            ; r
-    STA $2007
-    LDA #$18            ; e
-    STA $2007
+    INX
+    CPX #5
+    BNE write_score
 
 
 /*
