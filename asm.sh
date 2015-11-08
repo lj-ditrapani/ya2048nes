@@ -1,1 +1,1 @@
-xa -v -o game.o65 game.asm
+xa -v -o 2048.nes game.asm
