@@ -20,6 +20,8 @@
 ; $8000 = 32,768 = 32 KB = start of NES PRG ROM
 * = $8000
 
+; Data -------------------------------------------------------------------------
+
 palette:
     ; Global background  light-light-blue
     ; $0D = black
@@ -46,6 +48,16 @@ sprite_data:
     .byte $98,$30,%00000010,$80
     .byte $98,$31,%00000011,$88
 
+
+; Subroutines ------------------------------------------------------------------
+
+wait_on_vblank:
+    LDA $2002
+    BPL wait_on_vblank
+    RTS
+
+; RESET ------------------------------------------------------------------------
+
 RESET:
     SEI                 ; SEt Interrupt disable; I flag = 1; disable IRQs
     CLD                 ; CLear Decimal mode; D flag = 0; Disable decimal mode
@@ -61,13 +73,8 @@ RESET:
 
 ; Apparently we have to wait for 2 frames before the PPU is ready...
 ; it was in bunnyboy's nerdy nights tutorial
-wait_on_vblank1:        ; First wait for vblank to make sure PPU is ready
-    LDA $2002
-    BPL wait_on_vblank1
-
-wait_on_vblank2:        ; Second wait for vblank, PPU is ready after this
-    LDA $2002
-    BPL wait_on_vblank2
+JSR wait_on_vblank        ; First wait for vblank to make sure PPU is ready
+JSR wait_on_vblank        ; Second wait for vblank, PPU is ready after this
 
 ; PALETTE
     LDA $2002           ; read PPU status to reset the high/low latch to high
@@ -146,6 +153,9 @@ write_a_blank:
     LDA #$AB
     STA y_pos
 
+
+; Main -------------------------------------------------------------------------
+
 main:
 ; TODO  determine if inside animation sequence
 animating:
@@ -216,6 +226,8 @@ right_pressed:
     LDA #$F0
     STA frame_counter
     JMP update_sprites
+
+; VBlank -----------------------------------------------------------------------
 
 ; When vblank interrupt, DMA sprite data and modify nametable
 VBLANK:
