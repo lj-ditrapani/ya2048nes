@@ -123,43 +123,78 @@ fill_palette:
     CPX #$20            ; Write 32 colors; 16 bg & 16 sprite
     BNE fill_palette
 
-nametable:
+; nametable
+    LDA $2002           ; read PPU status to reset the high/low latch to high
     LDA #$20
     STA $2006
     LDA #$00
     STA $2006
 
-; Fill first 2 rows of nametable with blank
+; Set entire screen to blank tile
+    LDY #$00
+; 256 tiles = 8 rows of blank tiles
+draw_8_rows_of_blank_tiles:
     LDX #$00
     LDA #$87
-first_2_rows_of_nametable:
+draw_a_blank_tile:
     STA $2007
     INX
-    CPX #$40
-    BNE first_2_rows_of_nametable
+    CPX #$00
+    BNE draw_a_blank_tile
+    INY
+    CPY #4
+    BNE draw_8_rows_of_blank_tiles
+
+; Show Score
+    LDA $2002           ; read PPU status to reset the high/low latch to high
+    LDA #$20
+    STA $2006
+    LDA #$6A
+    STA $2006
+
+    LDA #21             ; s
+    STA $2007
+    LDA #02             ; c
+    STA $2007
+    LDA #$18            ; o
+    STA $2007
+    LDA #$18            ; r
+    STA $2007
+    LDA #$18            ; e
+    STA $2007
+
+
+/*
+; Show Top Score
+    LDA $2002           ; read PPU status to reset the high/low latch to high
+    LDA #$21
+    STA $2006
+    LDA #$21
+    STA $2006
 
 ; Show entire nametable on screen
     LDA #$00    ; CHR index
     LDY #$00    ; row counter
 fill_nametable_loop:
     LDX #$00    ; column counter
-write_a_chr:
-    STA $2007
-    CLC
-    ADC #$1
-    INX
-    CPX #$10
-    BNE write_a_chr
+    write_a_chr:
+        STA $2007
+        CLC
+        ADC #$1
+        INX
+        CPX #$10
+        BNE write_a_chr
 
-write_a_blank:
-    STA $2007
-    INX
-    CPX #$20
-    BNE write_a_blank
+    write_a_blank:
+        STA $2007
+        INX
+        CPX #$20
+        BNE write_a_blank
 
-    INY
-    CPY #$10
-    BNE fill_nametable_loop
+        INY
+        CPY #$10
+        BNE fill_nametable_loop
+*/
 
 ; Enable PPU
     LDA #%00011110      ; D4 Sprites visible
@@ -246,7 +281,7 @@ fill_sprites_loop:
     STA $0220
     LDA #$00            ; Tile
     STA $0221
-    LDA #%00000000      ; color
+    LDA #%00000011      ; color
     STA $0222
     LDA #$00            ; X index
     CLC
@@ -290,6 +325,12 @@ VBLANK:
     INC frame_counter
 
 ; put name table changes here
+
+; Reset PPU scroll since writes to PPU addr ($2006) overite this register
+    LDA $2002
+    LDA #$00
+    STA $2005
+    STA $2005
 
     JMP main
 
