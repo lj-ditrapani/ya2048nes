@@ -13,7 +13,7 @@ Just assemble program
 
 hex dump game
 
-    xxd game.o65 | less
+    xxd 2048.nes | less
 
 States
 ------
@@ -27,5 +27,13 @@ States
         - receive left
         - receive right
 - VBlank:  make changes to name table; DMA copy sprites
+
+
+TODO
+-----
+Finish setting initial background
+- top score
+- grid
+
 
 Author:  Lyall Jonathan Di Trapani
