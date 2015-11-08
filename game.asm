@@ -73,8 +73,37 @@ RESET:
 
 ; Apparently we have to wait for 2 frames before the PPU is ready...
 ; it was in bunnyboy's nerdy nights tutorial
-JSR wait_on_vblank        ; First wait for vblank to make sure PPU is ready
-JSR wait_on_vblank        ; Second wait for vblank, PPU is ready after this
+    JSR wait_on_vblank        ; First wait for vblank to make sure PPU is ready
+
+/*
+    LDA #$00
+    TAX
+clear_0_page:
+    STA $00, x
+    INX
+    BNE clear_0_page
+*/
+
+    LDX #$00
+    LDA #$02
+    STA $0000
+    LDA #$00
+    STA $0001
+clear_work_ram:
+    LDA #$CC
+    STA ($0000, x)
+    INC $0000
+    LDA $0000
+    BNE clear_work_ram
+    INC $0001
+    LDA $0001
+    CMP #$08
+    BNE clear_work_ram
+    LDA #$00
+    STA $0000
+    STA $0001
+
+    JSR wait_on_vblank        ; Second wait for vblank, PPU is ready after this
 
 ; PALETTE
     LDA $2002           ; read PPU status to reset the high/low latch to high
@@ -146,12 +175,30 @@ write_a_blank:
     STA $2000           ; enable NMI
 
 ; frame_counter
-    frame_counter = $0000
+    pointer_low = $0000
+    pointer_high = $0001
+    frame_counter = $0002
     LDA #$00
     STA frame_counter
-    y_pos = $0001
+    y_pos = $0003
     LDA #$AB
     STA y_pos
+    score_low = $0004
+    score_high = $0005
+    board = $0010       ; $0010 - $001F contain the board values
+    ; enum tile state
+    tile_empty = 0
+    tile_2 = 1
+    tile_4 = 2
+    tile_8 = 3
+    tile_16 = 4
+    tile_32 = 5
+    tile_64 = 6
+    tile_128 = 7
+    tile_256 = 8
+    tile_512 = 9
+    tile_1024 = 10
+    tile_2048 = 11
 
 
 ; Main -------------------------------------------------------------------------
