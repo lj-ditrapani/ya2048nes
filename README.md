@@ -32,7 +32,6 @@ States
 TODO
 -----
 Finish setting initial background
-- top score
 - grid
 
 

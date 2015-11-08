@@ -166,16 +166,30 @@ draw_a_blank_tile:
     STA $2006
 
     LDX #$00
-write_score:
+write_score_label:
     LDA score_string, x
     STA $2007
     INX
     CPX #5
-    BNE write_score
+    BNE write_score_label
+
+; Show Top Score
+    LDA $2002           ; read PPU status to reset the high/low latch to high
+    LDA #$20
+    STA $2006
+    LDA #$8A
+    STA $2006
+
+    LDX #$00
+write_top_score_label:
+    LDA top_score_string, x
+    STA $2007
+    INX
+    CPX #9
+    BNE write_top_score_label
 
 
 /*
-; Show Top Score
     LDA $2002           ; read PPU status to reset the high/low latch to high
     LDA #$21
     STA $2006
