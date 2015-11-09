@@ -88,15 +88,7 @@ RESET:
 ; it was in bunnyboy's nerdy nights tutorial
     JSR wait_on_vblank        ; First wait for vblank to make sure PPU is ready
 
-/*
-    LDA #$00
-    TAX
-clear_0_page:
-    STA $00, x
-    INX
-    BNE clear_0_page
-*/
-
+; Clear work ram
     LDX #$00
     LDA #$02
     STA $0000
@@ -104,7 +96,7 @@ clear_0_page:
     STA $0001
 clear_work_ram:
     LDA #$CC
-    STA ($0000, x)
+    STA ($00, x)
     INC $0000
     LDA $0000
     BNE clear_work_ram
