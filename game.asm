@@ -91,22 +91,22 @@ RESET:
 ; Clear work ram
     LDX #$00
     LDA #$02
-    STA $0000
+    STA $00
     LDA #$00
-    STA $0001
+    STA $01
 clear_work_ram:
     LDA #$CC
     STA ($00, x)
-    INC $0000
-    LDA $0000
+    INC $00
+    LDA $00
     BNE clear_work_ram
-    INC $0001
-    LDA $0001
+    INC $01
+    LDA $01
     CMP #$08
     BNE clear_work_ram
     LDA #$00
-    STA $0000
-    STA $0001
+    STA $00
+    STA $01
 
     JSR wait_on_vblank        ; Second wait for vblank, PPU is ready after this
 
@@ -226,17 +226,18 @@ fill_nametable_loop:
     STA $2000           ; enable NMI
 
 ; frame_counter
-    pointer_low = $0000
-    pointer_high = $0001
-    frame_counter = $0002
+    ; addresses $0000-$000F used as temporary registers
+    pointer_low = $00
+    pointer_high = $01
+    frame_counter = $10
     LDA #$00
     STA frame_counter
-    y_pos = $0003
+    y_pos = $11
     LDA #$AB
     STA y_pos
-    score_low = $0004
-    score_high = $0005
-    board = $0010       ; $0010 - $001F contain the board values
+    score_low = $12
+    score_high = $13
+    board = $20         ; $0010 - $001F contain the board values
     ; enum tile state
     tile_empty = 0
     tile_2 = 1
