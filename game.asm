@@ -69,6 +69,36 @@ wait_on_vblank:
     BPL wait_on_vblank
     RTS
 
+; Expects two paramters, data address and screen location
+;
+; Data adress: address of string to draw
+; the first byte of data is the length of string (1-255) and the rest are the
+; actual ASCII characters of the string (a-z and <space>).
+; found in tmp var $00 (low byte) $01 (high byte)
+;
+; Screen location:  position in nametable where drawing should begin
+; found in tmp var $02 (low byte) $03 (high byte)
+draw_string:
+    LDA $2002           ; read PPU status to reset the high/low latch to high
+    LDA $03
+    STA $2006
+    LDA $02
+    STA $2006
+
+    LDX #$00            ; X will count down the size of the string
+    LDA ($00, x)
+    TAX                 ; X has length of string
+    LDY #$01            ; Y is index into string
+    write_char:
+        LDA ($00), y
+        STA $2007
+        DEX
+        INY
+        BPL write_char
+    RTS
+
+
+
 ; RESET ------------------------------------------------------------------------
 
 RESET:
@@ -154,7 +184,7 @@ draw_a_blank_tile:
     LDA $2002           ; read PPU status to reset the high/low latch to high
     LDA #$20
     STA $2006
-    LDA #$6A
+    LDA #$68
     STA $2006
 
     LDX #$00
@@ -169,7 +199,7 @@ write_score_label:
     LDA $2002           ; read PPU status to reset the high/low latch to high
     LDA #$20
     STA $2006
-    LDA #$8A
+    LDA #$88
     STA $2006
 
     LDX #$00
