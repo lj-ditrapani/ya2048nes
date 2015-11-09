@@ -31,8 +31,12 @@ States
 
 TODO
 -----
+- make 16 temp variable 0-15 in zero page
 Finish setting initial background
 - grid
+- Make string rendering subroutine
+    - strings stored as (size, string): .aasc 5, "score"
+    - uses pointer that stores pointer to string
 
 
 Author:  Lyall Jonathan Di Trapani
