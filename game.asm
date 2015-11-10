@@ -98,6 +98,8 @@ draw_string:
     RTS
 
 
+draw_blank_cell_row:
+
 
 ; RESET ------------------------------------------------------------------------
 
@@ -209,6 +211,45 @@ write_top_score_label:
     INX
     CPX #9
     BNE write_top_score_label
+
+; .byte $86,$87,$87,$88
+
+; Draw grid
+    LDA $2002
+    LDA #$20
+    STA $2006
+    LDA #$E7
+    STA $2006
+
+    LDA #$98
+    STA $2007
+
+    LDA #$86
+    STA $2007
+    LDA #$87
+    STA $2007
+    STA $2007
+    LDA #$88
+    STA $2007
+
+    LDA #$86
+    STA $2007
+    LDA #$87
+    STA $2007
+    STA $2007
+    LDA #$88
+    STA $2007
+
+    LDA #$86
+    STA $2007
+    LDA #$87
+    STA $2007
+    STA $2007
+    LDA #$88
+    STA $2007
+
+    LDA #$96
+    STA $2007
 
 
 /*
