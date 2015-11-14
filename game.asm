@@ -97,6 +97,16 @@ draw_string:
         BPL write_char
     RTS
 
+; Expects one parameters
+; $00 = the index into the pattern table of the boarder tile
+draw_boarder:
+    LDA $00
+    LDX #0
+    draw_one_boarder_segment:
+        STA $2007
+        CPX #12
+        BNE draw_one_boarder_segment
+    RTS
 
 draw_blank_cell_row:
 
@@ -215,6 +225,69 @@ write_top_score_label:
 ; .byte $86,$87,$87,$88
 
 ; Draw grid
+; draw top boarder
+    LDA $2002
+    LDA #$20
+    STA $2006
+    LDA #$C8
+    STA $2006
+
+    LDA #$87
+    STA $00
+
+    LDA #$A7
+    STA $2007
+    STA $2007
+    STA $2007
+    STA $2007
+
+    STA $2007
+    STA $2007
+    STA $2007
+    STA $2007
+
+    STA $2007
+    STA $2007
+    STA $2007
+    STA $2007
+
+    STA $2007
+    STA $2007
+    STA $2007
+    STA $2007
+
+    ;JSR draw_boarder
+
+; draw bottom boarder
+
+    LDA $2002
+    LDA #$22
+    STA $2006
+    LDA #$E8
+    STA $2006
+
+    LDA #$87
+    STA $2007
+    STA $2007
+    STA $2007
+    STA $2007
+
+    STA $2007
+    STA $2007
+    STA $2007
+    STA $2007
+
+    STA $2007
+    STA $2007
+    STA $2007
+    STA $2007
+
+    STA $2007
+    STA $2007
+    STA $2007
+    STA $2007
+
+; draw row of cells
     LDA $2002
     LDA #$20
     STA $2006
@@ -222,6 +295,14 @@ write_top_score_label:
     STA $2006
 
     LDA #$98
+    STA $2007
+
+    LDA #$86
+    STA $2007
+    LDA #$87
+    STA $2007
+    STA $2007
+    LDA #$88
     STA $2007
 
     LDA #$86
