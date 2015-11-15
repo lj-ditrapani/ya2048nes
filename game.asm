@@ -99,7 +99,7 @@ draw_string:
 
 ; Expects one parameter in the accumulator
 ; The index into the pattern table of the boarder tile
-draw_boarder:
+draw_horizontal_boarder:
     LDX #0
     draw_one_boarder_segment:
         STA $2007
@@ -108,7 +108,56 @@ draw_boarder:
         BNE draw_one_boarder_segment
     RTS
 
-draw_blank_cell_row:
+; No parameters; uses A X Y $00 $01
+draw_vertical_boarders:
+    LDA #$E7
+    STA $00
+    LDA #$20
+    STA $01
+    LDY #$98
+    LDX #0
+    ; Y    The index into the pattern table of the left boarder tile
+    ; X    Iteration counter
+    ; $00  Low byte pointer to next boarder address in name table
+    ; $01  High byte pointer to next boarder address in name table
+    draw_one_side_boarder_segment_pair:
+        JSR load_name_table_position
+        ; write tile index of left boarder to name table
+        STY $2007
+
+        ; add 17 to pointer (never sets carry bit, does not effect high byte)
+        LDA $00
+        CLC
+        ADC #17
+        STA $00
+
+        JSR load_name_table_position
+        ; write tile index of right boarder to name table
+        LDA #$96
+        STA $2007
+
+        ; add 15 to pointer (may set carry bit and effect high byte)
+        LDA $00
+        CLC
+        ADC #15
+        STA $00
+        LDA $01
+        ADC #0
+        STA $01
+
+        INX
+        CPX #16
+        BNE draw_one_side_boarder_segment_pair
+    RTS
+
+
+load_name_table_position:
+    LDA $2002
+    LDA $01
+    STA $2006
+    LDA $00
+    STA $2006
+    RTS
 
 
 ; RESET ------------------------------------------------------------------------
@@ -234,7 +283,7 @@ write_top_score_label:
     STA $2006
 
     LDA #$A7
-    JSR draw_boarder
+    JSR draw_horizontal_boarder
 
 ; draw bottom boarder
     LDA $2002
@@ -244,7 +293,10 @@ write_top_score_label:
     STA $2006
 
     LDA #$87
-    JSR draw_boarder
+    JSR draw_horizontal_boarder
+
+; draw left and right boarders
+    JSR draw_vertical_boarders
 
 ; draw row of cells
     LDA $2002

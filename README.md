@@ -38,7 +38,6 @@ TODO
 -----
 Finish setting initial background
 - grid
-    - make draw left and right boarder
     - make draw_cell(x,y,type)
 - draw_cell(x,y,type)
     - used to draw initial background
@@ -60,6 +59,7 @@ Finish setting initial background
 
 - use or lose the draw_string subroutine
     - appears to be break even in instruction count
+    - use a x y $00 for parameter passing?
 
 
 Author:  Lyall Jonathan Di Trapani
