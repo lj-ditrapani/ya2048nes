@@ -44,6 +44,7 @@ Finish setting initial background
     - used to change individual cells during game
     - type
 
+```
         0  blank
         1      1
         2      2
@@ -56,6 +57,8 @@ Finish setting initial background
         9    512
         10  1024
         11  2048
+```
+
 
 - use or lose the draw_string subroutine
     - appears to be break even in instruction count
