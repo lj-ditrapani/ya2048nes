@@ -146,7 +146,7 @@ draw_vertical_boarders:
         STA $01
 
         INX
-        CPX #16
+        CPX #16         ; 16 rows
         BNE draw_one_side_boarder_segment_pair
     RTS
 
@@ -163,6 +163,27 @@ load_name_table_position:
 ; X cell type 0-11
 ; Y cell position 0-15
 draw_cell:
+    ; $00   low byte of name table address
+    ; $01   high byte of name table address
+    ; $02   type of cell
+    ; $03   cell position
+    ; $04   chr cell boarder index
+    ; $05   attr color
+    ; $06   pointer to inner 4 chr tile label indices - low byte
+    ; $07   pointer to inner 4 chr tile label indices - high byte
+    STX $02
+    STY $03
+    TXA
+    AND #%00001000
+    CMP #%00001000
+    BEQ load_22
+    LDA #$21
+load_22:
+    JMP store_high_byte_of_name_table_address
+    LDA #$22
+store_high_byte_of_name_table_address:
+    STA $01
+
 
 
 ; RESET ------------------------------------------------------------------------
@@ -275,8 +296,6 @@ write_top_score_label:
     INX
     CPX #9
     BNE write_top_score_label
-
-; .byte $86,$87,$87,$88
 
 ; Draw grid
 
