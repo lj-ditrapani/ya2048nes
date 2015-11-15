@@ -77,13 +77,11 @@ wait_on_vblank:
 ; found in tmp var $00 (low byte) $01 (high byte)
 ;
 ; Screen location:  position in nametable where drawing should begin
-; found in tmp var $02 (low byte) $03 (high byte)
+; found in X (low byte) Y (high byte)
 draw_string:
     LDA $2002           ; read PPU status to reset the high/low latch to high
-    LDA $03
-    STA $2006
-    LDA $02
-    STA $2006
+    STY $2006
+    STX $2006
 
     LDX #$00            ; X will count down the size of the string
     LDA ($00, x)
@@ -92,8 +90,8 @@ draw_string:
     write_char:
         LDA ($00), y
         STA $2007
-        DEX
         INY
+        DEX
         BPL write_char
     RTS
 
