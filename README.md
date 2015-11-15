@@ -1,5 +1,5 @@
-Yet another 2048 on the NES
-===========================
+Yet another 2048 on the Nintendo Entertainment System (NES)
+===========================================================
 
 My first romp into NES programming.
 
