@@ -42,6 +42,7 @@ Finish setting initial background
 - draw_cell(x,y,type)
     - used to draw initial background
     - used to change individual cells during game
+    - parameters:  cell_pos: 0-15, type: 0-11
     - type
 
 ```

@@ -110,9 +110,9 @@ draw_horizontal_boarder:
 
 ; No parameters; uses A X Y $00 $01
 draw_vertical_boarders:
-    LDA #$E7
+    LDA #$07
     STA $00
-    LDA #$20
+    LDA #$21
     STA $01
     LDY #$98
     LDX #0
@@ -158,6 +158,11 @@ load_name_table_position:
     LDA $00
     STA $2006
     RTS
+
+
+; X cell type 0-11
+; Y cell position 0-15
+draw_cell:
 
 
 ; RESET ------------------------------------------------------------------------
@@ -279,7 +284,7 @@ write_top_score_label:
     LDA $2002
     LDA #$20
     STA $2006
-    LDA #$C8
+    LDA #$E8
     STA $2006
 
     LDA #$A7
@@ -287,9 +292,9 @@ write_top_score_label:
 
 ; draw bottom boarder
     LDA $2002
-    LDA #$22
+    LDA #$23
     STA $2006
-    LDA #$E8
+    LDA #$08
     STA $2006
 
     LDA #$87
@@ -300,14 +305,11 @@ write_top_score_label:
 
 ; draw row of cells
     LDA $2002
-    LDA #$20
+    LDA #$21
     STA $2006
-    LDA #$E7
+    LDA #$08
     STA $2006
 
-    LDA #$98
-    STA $2007
-
     LDA #$86
     STA $2007
     LDA #$87
@@ -338,9 +340,6 @@ write_top_score_label:
     STA $2007
     STA $2007
     LDA #$88
-    STA $2007
-
-    LDA #$96
     STA $2007
 
 
