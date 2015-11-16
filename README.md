@@ -40,6 +40,8 @@ Finish setting initial background
 - grid
     - make draw_cell(x,y,type)
 - draw_cell(x,y,type)
+    - make better use of labels in subroutine
+        - use scopes to make local labels .( .)
     - used to draw initial background
     - used to change individual cells during game
     - parameters:  cell_pos: 0-15, type: 0-11
