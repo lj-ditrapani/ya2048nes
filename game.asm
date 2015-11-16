@@ -169,10 +169,12 @@ draw_cell:
     ; $01   high byte of name table address
     ; $02   type of cell
     ; $03   cell position
-    ; $04   chr cell boarder index
-    ; $05   attr color
-    ; $06   pointer to inner 4 chr tile label indices - low byte
-    ; $07   pointer to inner 4 chr tile label indices - high byte
+    ; $04   chr cell boarder offset
+    ; $05   chr cell boarder index
+    ; $06   address of tile attr color index
+    ; $07   attr color index 0-3
+    ; $08   pointer to inner 4 chr tile label indices - low byte
+    ; $09   pointer to inner 4 chr tile label indices - high byte
     STX $02
     STY $03
     TYA

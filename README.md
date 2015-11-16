@@ -38,8 +38,8 @@ TODO
 -----
 Finish setting initial background
 - grid
-    - make draw_cell(x,y,type)
-- draw_cell(x,y,type)
+    - make draw_cell(position,type)
+- draw_cell(position,type)
     - make better use of labels in subroutine
         - use scopes to make local labels .( .)
     - used to draw initial background
@@ -60,6 +60,22 @@ Finish setting initial background
         9    512
         10  1024
         11  2048
+```
+
+```
+type    index   color
+0       0       0       global
+1       1       0       blue
+2       1       0       blue
+3       2       0       cyan
+4       2       0       cyan
+5       1       1       green
+6       2       1       purple
+7       1       2       fusia
+8       2       2       hot pink
+9       1       3       orange
+10      2       3       red
+11      1       0       blue
 ```
 
 
