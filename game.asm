@@ -61,6 +61,9 @@ sprite_data:
     .byte $98,$30,%00000010,$80
     .byte $98,$31,%00000011,$88
 
+cell_x_column_name_table_address_data:
+    .byte $08,$0C,$10,$14
+
 
 ; Subroutines ------------------------------------------------------------------
 
@@ -182,6 +185,30 @@ load_22:
     LDA #$22
 store_high_byte_of_name_table_address:
     STA $01
+    TYA
+    AND #%00000100
+    CMP #%00000100
+    BEQ load_80
+    LDA #0
+    JMP move_base_low_byte_of_name_table_address
+load_80:
+    LDA #$80
+move_base_low_byte_of_name_table_address:
+    STA $00
+    TYA
+    AND #%00000011
+    TAX
+    LDA $00
+    CLC
+    ADC cell_x_column_name_table_address_data, x
+    STA $00
+    JSR load_name_table_position
+
+    LDA #$06
+    STA $2007
+
+    RTS
+
 
 
 
@@ -346,6 +373,24 @@ draw_a_blank_tile:
     STA $2007
     LDA #$88
     STA $2007
+
+; draw blank cells in grid
+
+    LDX #0               ; X cell type 0-11
+    LDY #10              ; Y cell position 0-15
+    JSR draw_cell
+
+    LDX #0               ; X cell type 0-11
+    LDY #3              ; Y cell position 0-15
+    ;JSR draw_cell
+    LDX #0               ; X cell type 0-11
+    LDY #10              ; Y cell position 0-15
+    ;JSR draw_cell
+    LDX #0               ; X cell type 0-11
+    LDY #15              ; Y cell position 0-15
+    ;JSR draw_cell
+
+
 
 
 ; Enable PPU
