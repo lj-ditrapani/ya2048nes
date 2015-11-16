@@ -25,15 +25,15 @@
 ; strings
 
 score_string:
-    .aasc "score"
+    .aasc 5,"score"
 top_score_string:
-    .aasc "top score"
+    .aasc 9,"top score"
 you_win_string:
-    .aasc "you win"
+    .aasc 7,"you win"
 you_loose_string:
-    .aasc "you lose"
+    .aasc 8,"you lose"
 play_again_string:
-    .aasc "press a to play again"
+    .aasc 21,"press a to play again"
 
 palette:
     ; Global background  light-light-blue
@@ -86,6 +86,7 @@ draw_string:
     LDX #$00            ; X will count down the size of the string
     LDA ($00, x)
     TAX                 ; X has length of string
+    DEX                 ; Account for offset
     LDY #$01            ; Y is index into string
     write_char:
         LDA ($00), y
@@ -266,34 +267,21 @@ draw_a_blank_tile:
     BNE draw_8_rows_of_blank_tiles
 
 ; Show Score
-    LDA $2002           ; read PPU status to reset the high/low latch to high
-    LDA #$20
-    STA $2006
-    LDA #$68
-    STA $2006
-
-    LDX #$00
-write_score_label:
-    LDA score_string, x
-    STA $2007
-    INX
-    CPX #5
-    BNE write_score_label
-
+    LDY #$20
+    LDX #$68
+    LDA #<score_string  ; low byte
+    STA $00
+    LDA #>score_string  ; high byte
+    STA $01
+    JSR draw_string
 ; Show Top Score
-    LDA $2002           ; read PPU status to reset the high/low latch to high
-    LDA #$20
-    STA $2006
-    LDA #$88
-    STA $2006
-
-    LDX #$00
-write_top_score_label:
-    LDA top_score_string, x
-    STA $2007
-    INX
-    CPX #9
-    BNE write_top_score_label
+    LDY #$20
+    LDX #$88
+    LDA #<top_score_string  ; low byte
+    STA $00
+    LDA #>top_score_string  ; high byte
+    STA $01
+    JSR draw_string
 
 ; Draw grid
 
@@ -360,37 +348,6 @@ write_top_score_label:
     STA $2007
 
 
-/*
-    LDA $2002           ; read PPU status to reset the high/low latch to high
-    LDA #$21
-    STA $2006
-    LDA #$21
-    STA $2006
-
-; Show entire nametable on screen
-    LDA #$00    ; CHR index
-    LDY #$00    ; row counter
-fill_nametable_loop:
-    LDX #$00    ; column counter
-    write_a_chr:
-        STA $2007
-        CLC
-        ADC #$1
-        INX
-        CPX #$10
-        BNE write_a_chr
-
-    write_a_blank:
-        STA $2007
-        INX
-        CPX #$20
-        BNE write_a_blank
-
-        INY
-        CPY #$10
-        BNE fill_nametable_loop
-*/
-
 ; Enable PPU
     LDA #%00011110      ; D4 Sprites visible
                         ; D3 BG visible
@@ -404,7 +361,7 @@ fill_nametable_loop:
                         ; D3-4  BG patterns $0000; Sprite patterns $1000
     STA $2000           ; enable NMI
 
-; frame_counter
+; variables
     ; addresses $0000-$000F used as temporary registers
     pointer_low = $00
     pointer_high = $01

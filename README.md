@@ -61,9 +61,4 @@ Finish setting initial background
 ```
 
 
-- use or lose the draw_string subroutine
-    - appears to be break even in instruction count
-    - use a x y $00 for parameter passing?
-
-
 Author:  Lyall Jonathan Di Trapani
