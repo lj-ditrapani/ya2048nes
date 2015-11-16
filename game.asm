@@ -204,7 +204,7 @@ move_base_low_byte_of_name_table_address:
     STA $00
     JSR load_name_table_position
 
-    LDA #$06
+    LDA $02
     STA $2007
 
     RTS
@@ -376,13 +376,13 @@ draw_a_blank_tile:
 
 ; draw blank cells in grid
 
-    LDX #0               ; X cell type 0-11
+    LDX #5               ; X cell type 0-11
     LDY #3              ; Y cell position 0-15
     JSR draw_cell
-    LDX #0               ; X cell type 0-11
+    LDX #6               ; X cell type 0-11
     LDY #9              ; Y cell position 0-15
     JSR draw_cell
-    LDX #0               ; X cell type 0-11
+    LDX #9               ; X cell type 0-11
     LDY #15              ; Y cell position 0-15
     JSR draw_cell
 
