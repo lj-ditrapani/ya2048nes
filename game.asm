@@ -175,13 +175,13 @@ draw_cell:
     ; $07   pointer to inner 4 chr tile label indices - high byte
     STX $02
     STY $03
-    TXA
+    TYA
     AND #%00001000
     CMP #%00001000
     BEQ load_22
     LDA #$21
-load_22:
     JMP store_high_byte_of_name_table_address
+load_22:
     LDA #$22
 store_high_byte_of_name_table_address:
     STA $01
@@ -377,18 +377,14 @@ draw_a_blank_tile:
 ; draw blank cells in grid
 
     LDX #0               ; X cell type 0-11
-    LDY #10              ; Y cell position 0-15
-    JSR draw_cell
-
-    LDX #0               ; X cell type 0-11
     LDY #3              ; Y cell position 0-15
-    ;JSR draw_cell
+    JSR draw_cell
     LDX #0               ; X cell type 0-11
-    LDY #10              ; Y cell position 0-15
-    ;JSR draw_cell
+    LDY #9              ; Y cell position 0-15
+    JSR draw_cell
     LDX #0               ; X cell type 0-11
     LDY #15              ; Y cell position 0-15
-    ;JSR draw_cell
+    JSR draw_cell
 
 
 
